@@ -28,6 +28,12 @@ jobs:
           java-version: 17
       - name: Build native parts (Xray, tun2socks, OpenVPN)
         run: bash "$PROJ/ci/native.sh"
+      - name: Check native libs
+        run: |
+          for f in libhev-socks5-tunnel.so libovpnexec.so libopenvpn.so; do
+            if [ -f "$PROJ/app/src/main/jniLibs/arm64-v8a/$f" ]; then echo "OK      $f"; else echo "::warning::MISSING $f"; fi
+          done
+          [ -f "$PROJ/app/libs/libv2ray.aar" ] && echo "OK      libv2ray.aar" || echo "::warning::MISSING libv2ray.aar"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
