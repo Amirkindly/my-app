@@ -25,8 +25,8 @@ jobs:
           gradle-version: 8.7
       - name: Build
         working-directory: VerseVPN
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleRelease --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: VerseVPN-debug-apk
-          path: VerseVPN/app/build/outputs/apk/debug/*.apk
+          name: VerseVPN-apk
+          path: VerseVPN/app/build/outputs/apk/release/*.apk
