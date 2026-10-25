@@ -6,27 +6,34 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip project
-        run: unzip -o VerseVPN-hop2.zip
+      - name: Locate project
+        run: |
+          if [ -f app/build.gradle.kts ]; then PROJ=.
+          elif [ -f VerseVPN/app/build.gradle.kts ]; then PROJ=VerseVPN
+          elif [ -f VerseVPN-hop2.zip ]; then unzip -oq VerseVPN-hop2.zip; PROJ=VerseVPN
+          else echo "Project not found. Repo contents:"; ls -R | head -60; exit 1
+          fi
+          echo "Using project dir: $PROJ"
+          echo "PROJ=$PROJ" >> "$GITHUB_ENV"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - name: Build native parts (Xray, tun2socks, OpenVPN)
-        run: bash VerseVPN/ci/native.sh
+        run: bash "$PROJ/ci/native.sh"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: native-log
-          path: VerseVPN/ci/native.log
+          path: ${{ env.PROJ }}/ci/native.log
           if-no-files-found: ignore
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
       - name: Build
-        working-directory: VerseVPN
+        working-directory: ${{ env.PROJ }}
         run: gradle assembleRelease --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: VerseVPN-apk
-          path: VerseVPN/app/build/outputs/apk/release/*.apk
+          path: ${{ env.PROJ }}/app/build/outputs/apk/release/*.apk
