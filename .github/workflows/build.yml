@@ -4,7 +4,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - name: Unzip project
         run: unzip -o VerseVPN-hop2.zip
       - uses: actions/setup-java@v4
