@@ -8,21 +8,19 @@ jobs:
       
       - name: Unzip project
         run: unzip VerseVPN-hop2.zip
-        
+          
       - name: set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-        working-directory: ./VerseVPN-hop2
-        
       - name: Build with Gradle
-        run: ./gradlew assembleDebug
-        working-directory: ./VerseVPN-hop2
-        
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assembleDebug
+          build-root-directory: ./VerseVPN-hop2
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
